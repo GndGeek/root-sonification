@@ -15,7 +15,7 @@ def data_to_sound(values, bin_min, bin_max, bin_width):
 	values_max = max(values)
 	values_min = min(values)
 	
-	messages = []
+	messages = [Message('program_change', program=12)]
 	
 	for value in values:
 		note = int(value * 127 / values_max)
@@ -29,8 +29,6 @@ def output_messages(filename, messages):
 		track = MidiTrack()
 		outfile.tracks.append(track)
 
-		track.append(Message('program_change', program=12))
-		
 		for message in messages:
 			track.append(message)
 	outfile.save(filename)
