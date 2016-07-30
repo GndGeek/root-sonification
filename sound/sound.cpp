@@ -37,63 +37,130 @@
 
 using namespace std;
 
-std::vector<vector<Double_t>> * generate_data()
+//Sonification of root for blind scientist
+
+//Class to get the volume and frequency vectors
+class acc 
 {
-  //Resolution of the histogram
-  int bins=50;
 
-  //Amount of events
-  int amount=1000;
+//Get the volume vector 
+vector<double> volume()
+{ 
 
-  Double_t max=20;
-  Double_t min=-20;
+/////////////////////////////////////////////////////
+
+//Load the file with the histogram
+  TFile *f=new TFile("gaussian.root","recreate");
+//Extract the histogram
+//the name of the histogram should be a string class variable, but for now it has t be h1
+  TH1F *h1=(TH1F*)f->Get("h1");
+  Double_t number;
+
+ //Resolution of the histogram
+  int bins=h1->GetSize()-2;
+
+//Maximum value of the histogram
+  Double_t max=h1->GetMaximum();
+
+//Minimum value of the histogram  
+  Double_t min=h1->GetMinimum();
+
+//Variables to calculate the frequency
   Double_t step=max/bins;
   Double_t k=3000/(max-min);
   Double_t b=5000-k*max;
 
-/////////////////////////////////////////////////////
+//Vectors to store what we want
+  std::vector<double> volume;
+  std::vector<double> frequency;
+  std::vector<double> error;
 
-  //Create false data
-
-  TFile *f=new TFile("tester.root","recreate");
-  TF1 *g1 =new TF1("g1","abs(sin(x)/x)",0,10);
-  
-  TH1 *h1=new TH1F("h1","tester",bins,0,10);
-  h1->Sumw2();
-  Double_t number;
-
-  std::vector<Double_t> * volume=new std::vector<Double_t>;
-  std::vector<Double_t> * frequency=new std::vector<Double_t>;
-  std::vector<Double_t> * error=new std::vector<Double_t>;
-
-  for (int i=0;i<amount;i++)
-  {
-    number=g1->GetRandom(0,10);         
-    h1->Fill(number);
-  }
-
+//Loop to store the values
   for (int i = 0 ;i<bins;i++)
     {
-      number = h1 ->GetBinError(i+1);                
-      int element_volume=h1->GetBinContent(i+1);
-      volume->push_back(element_volume);
-      cout<<"volume "<<element_volume<<endl; 
-      frequency->push_back(i*step*k+b);
-      cout<<"freq "<<i*step*k+b<<endl;        
-      error->push_back(number);                      
+      //Get the error
+      number = h1 ->GetBinError(i+1);  
+
+      //Get the hight of the bin, this will be maped to sound by other program              
+      double element_volume=h1->GetBinContent(i+1);
+
+      //Store the volume
+      volume.push_back(element_volume);
+
+      //Store the frequency
+      frequency.push_back(i*step*k+b);
+
+      //Store the error       
+      error.push_back(number);                      
     }
 
   // cleanup
-  delete f; // automatically deletes "tree" too
-  std::vector<vector<Double_t>> * result=new std::vector<vector<Double_t>>;
-  result->push_back(*volume);
-  result->push_back(*frequency);
-  result->push_back(*error);
-  return result; 
+  delete f; 
+  return volume; 
 }
 
-int main(int argc, char* argv[])
+
+vector<double> frequency()
 { 
-	generate_data();
-	return 0;
+
+/////////////////////////////////////////////////////
+
+//Load the file with the histogram
+  TFile *f=new TFile("gaussian.root","recreate");
+//Extract the histogram
+//the name of the histogram should be a string class variable, but for now it has t be h1
+  TH1F *h1=(TH1F*)f->Get("h1");
+  Double_t number;
+
+ //Resolution of the histogram
+  int bins=h1->GetSize()-2;
+
+//Maximum value of the histogram
+  Double_t max=h1->GetMaximum();
+
+//Minimum value of the histogram  
+  Double_t min=h1->GetMinimum();
+
+//Variables to calculate the frequency
+  Double_t step=max/bins;
+  Double_t k=3000/(max-min);
+  Double_t b=5000-k*max;
+
+//Vectors to store what we want
+  std::vector<double> volume;
+  std::vector<double> frequency;
+  std::vector<double> error;
+
+//Loop to store the values
+  for (int i = 0 ;i<bins;i++)
+    {
+      //Get the error
+      number = h1 ->GetBinError(i+1);  
+
+      //Get the hight of the bin, this will be maped to sound by other program              
+      double element_volume=h1->GetBinContent(i+1);
+
+      //Store the volume
+      volume.push_back(element_volume);
+
+      //Store the frequency
+      frequency.push_back(i*step*k+b);
+
+      //Store the error       
+      error.push_back(number);                      
+    }
+
+  // cleanup
+  delete f;
+  return frequency; 
 }
+
+//This returns the vectors we got, don't ask me how
+ int main()
+ {
+    acc * oj = new acc();
+    vector<double> test1 = oj->frequency();
+    vector<double> test2 = oj->volume();
+   return 0;
+ }
+};
