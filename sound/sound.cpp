@@ -37,9 +37,8 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
-{ 
-
+std::vector<vector<Double_t>> * generate_data()
+{
   //Resolution of the histogram
   int bins=50;
 
@@ -86,5 +85,15 @@ int main(int argc, char* argv[])
 
   // cleanup
   delete f; // automatically deletes "tree" too
-  return 0; 
+  std::vector<vector<Double_t>> * result=new std::vector<vector<Double_t>>;
+  result->push_back(*volume);
+  result->push_back(*frequency);
+  result->push_back(*error);
+  return result; 
+}
+
+int main(int argc, char* argv[])
+{ 
+	generate_data();
+	return 0;
 }
