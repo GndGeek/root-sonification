@@ -4,6 +4,7 @@ import ROOT
 def extract_data(filename, branchname):
 	# Takes the name of a ROOT file and branch within that file.
 	# Constructs a histogram and returns (values, bin_min, bin_max, bin_width).
+	# Probably works by calling to a C++ ROOT macro.
 	pass
 
 def data_to_sound(values, bin_min, bin_max, bin_width):
@@ -14,4 +15,12 @@ def data_to_sound(values, bin_min, bin_max, bin_width):
 def output_messages(filename, messages):
 	# Takes the name of a MIDI file to create and fill with the list of messages.
 	# Returns nothing.
-	pass
+	with MidiFile() as outfile:
+		track = MidiTrack()
+		outfile.tracks.append(track)
+
+		track.append(Message('program_change', program=12))
+		
+		for message in messages:
+			track.append(message)
+	outfile.save(filename)
