@@ -1,4 +1,6 @@
+
 {
+TFile *f=new TFile("gaussian.root","recreate");
 int bins=50;
         TF1 *g1 =new TF1("g1","gaus",-20,20);
         g1->SetParameters(1,-2,2);
@@ -19,18 +21,16 @@ std::vector<Double_t> * error=new std::vector<Double_t>;
 
         for (int i = 0 ;i<bins;i++)
 {
-                number = h1 ->GetBinError(i+1);
-                
+                number = h1 ->GetBinError(i+1);                
  int element_volume=h1->GetBinContent(i+1);
 volume->push_back(element_volume);
 frequency->push_back(-20+i*40/bins);       
 error->push_back(number);       
-cout<<element_volume<<endl;                
+                
         }
-
-
-        new TCanvas;
-        h1->Draw("ep");
-              
+      new canvas;
+  h1->Draw("ep");
+h1->Write();
+f->Close();             
 }
 
