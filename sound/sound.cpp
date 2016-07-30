@@ -58,19 +58,20 @@ int main(int argc, char* argv[])
   tree->SetBranchAddress("metP4", &metdata);
 
   //Sound vector
-  //std::vector<Int_t> * volume= 0;
-
   std::vector<Double_t> * volume = new std::vector<Double_t>;
+  //Frequency vector
   std::vector<Double_t> * freq = new std::vector<Double_t>;
   
   //Resolution of the histogram
   int bins=50;
 
+  //Start of the x axis
   int a=0;
+  //End of the x axis
   int d=150;
 
+  //This two constants are used to map mass to frequency 
   Double_t g=3000/d;
-
   Double_t step=d/bins;
 
   //Histogram to plot the distribution of the transverse mass 
@@ -88,7 +89,7 @@ int main(int argc, char* argv[])
   //Variables for the for loop
 
   //Get how many events we have to loop through
-  //int nentries = tree->GetEntries();
+  int nentries = tree->GetEntries();
 
   //Create a variable to store the mass values
   Double_t mass;
@@ -114,28 +115,16 @@ int main(int argc, char* argv[])
     metmass->Fill(mass);
   }
 
-  cout<<"No problem here"<<endl;
-
-//Get the height of every bin
+//Loop to fill the mass and frequency vectors
   for (int i = 0; i < bins; ++i)
   {
+    //Get the hight of the bin
   	Int_t element_volume=metmass->GetBinContent (i);
-  	//volume->push_back(element_volume);
+  	//Put it in the volume vector 
   	volume->push_back(element_volume);
+  	//Fill the frequency vector with the formula that maps mass to frequency depending on the iteration
   	freq->push_back(i*g*step+2000);
-  	cout<<i*g*step+2000<<endl;
   }
-
-  //Activate the first section of the canvas
-  c1->cd(1);
-
-  //Make the histogram
-  metmass->Draw("H");
-
-  //Put it in the canvas
-  c1->Update();
-
-  c1->Close();
 
   // cleanup
   delete file; // automatically deletes "tree" too
