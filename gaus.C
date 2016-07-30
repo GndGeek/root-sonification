@@ -1,11 +1,11 @@
 
 {
-TFile *f=new TFile("gaussian.root","recreate");
+TFile *f=new TFile("oscilation.root","recreate");
 int bins=50;
-        TF1 *g1 =new TF1("g1","gaus",-20,20);
-        g1->SetParameters(1,-2,2);
-        TH1 *h1=new TH1F("h1","gaus",bins,-20,20);
-        h1->Sumw2();
+        TF1 *g1 =new TF1("g1","sin(x)*sin(x)",-20,20);
+        
+        TH1 *h1=new TH1F("h1","oscilation",bins,-20,20);
+        
 
         Double_t number;
 
@@ -26,10 +26,10 @@ std::vector<Double_t> * error=new std::vector<Double_t>;
 volume->push_back(element_volume);
 frequency->push_back(-20+i*40/bins);       
 error->push_back(number);       
-                
+               cout<<number<<endl; 
         }
   
-  
+h1->Draw("eq");  
 h1->Write();
 f->Close();
              
