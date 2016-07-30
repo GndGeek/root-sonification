@@ -44,6 +44,7 @@ error1->push_back(number1);
 h1->Draw();
 h2->Draw("same");  
 h1->Write();
+h2->Write();
 f->Close();
              
 }
