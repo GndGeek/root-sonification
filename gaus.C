@@ -6,7 +6,7 @@ int bins=50;
         g1->SetParameters(1,-2,2);
         TH1 *h1=new TH1F("h1","gaus",bins,-20,20);
         h1->Sumw2();
-        TH1 *h1_err=new TH1F("h1_err","gaus errors",bins,-20,20);
+
         Double_t number;
 
 std::vector<Double_t> * volume=new std::vector<Double_t>;
@@ -28,9 +28,10 @@ frequency->push_back(-20+i*40/bins);
 error->push_back(number);       
                 
         }
-      new canvas;
-  h1->Draw("ep");
+  
+  
 h1->Write();
-f->Close();             
+f->Close();
+             
 }
 
