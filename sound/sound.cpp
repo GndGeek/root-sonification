@@ -37,97 +37,126 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
+class acc 
+{
+
+vector<double> volume()
 { 
-  //Essentials
 
-  //Upload the file with the data, make sure the adress of the file matches the one in your computer
-  TFile* file = TFile::Open("/Users/Fer/Documents/traajo/samples/NeroNtuples_9.root"); // TFile::Open() instead of a constructor since it works over xrootd etc. =D
-  
-  //Upload the tree with the event data
-  TTree *tree=(TTree*)file->Get("nero/events");
-
-/////////////////////////////////////////////////////
-
-  //MET criteria
-
-  //Create a variable to store all the "met" data
-  TClonesArray *metdata = new TClonesArray("metdata");
-
-  //Specify where all the "met" data will be stored
-  tree->SetBranchAddress("metP4", &metdata);
-
-  //Sound vector
-  std::vector<Double_t> * volume = new std::vector<Double_t>;
-  //Frequency vector
-  std::vector<Double_t> * freq = new std::vector<Double_t>;
-  
   //Resolution of the histogram
   int bins=50;
 
-  //Start of the x axis
-  int a=0;
-  //End of the x axis
-  int d=150;
+  //Amount of events
+  int amount=1000;
 
-  //This two constants are used to map mass to frequency 
-  Double_t g=3000/d;
-  Double_t step=d/bins;
-
-  //Histogram to plot the distribution of the transverse mass 
-  TH1F *metmass = new TH1F("metmass", "Missing transverse mass", bins, a, d); 
+  Double_t max=20;
+  Double_t min=-20;
+  Double_t step=max/bins;
+  Double_t k=3000/(max-min);
+  Double_t b=5000-k*max;
 
 /////////////////////////////////////////////////////
 
-  //Histogram variables
+  //Create false data
 
-  //Create the canvas were the histograms will be ploted
-  TCanvas* c1 = new TCanvas("c1", "Masses", 600, 600);
+  TFile *f=new TFile("gaussian.root","recreate");
+  TF1 *g1 =new TF1("g1","gaus",-20,20);
+  g1->SetParameters(1,-2,2);
+  TH1 *h1=new TH1F("h1","gaus",bins,-20,20);
+  h1->Sumw2();
+  Double_t number;
 
-/////////////////////////////////////////////////////
+  //std::vector<Int_t> * volume=new std::vector<Int_t>;
+  //std::vector<Int_t> * frequency=new std::vector<Int_t>;
+  //std::vector<Double_t> * error=new std::vector<Double_t>;
 
-  //Variables for the for loop
+   std::vector<double> volume;
+    std::vector<double> frequency;
+     std::vector<double> error;
 
-  //Get how many events we have to loop through
-  int nentries = tree->GetEntries();
-
-  //Create a variable to store the mass values
-  Double_t mass;
-
-  //Loop through all the events
-  for(int ientry = 0; ientry < 50; ientry++) 
+  for (int i=0;i<amount;i++)
   {
-    //Reset the met data 
-    metdata->Clear();
-
-    //This line stores the proper data in the variables qe specified
-    tree->GetEntry(ientry);
-    
-//Implementation of met criteria 
-
-    //Create a lorentz vector with the matdata of the current entry
-    TLorentzVector * lorentz_metdata = (TLorentzVector *) metdata->At(0);
-
-    //Get the invariant transverse mass of that lorentz vector
-    mass=lorentz_metdata->Mt();
-  
-  	//Put the mass in the histogram
-    metmass->Fill(mass);
+    number=g1->GetRandom(-20,20);         
+    h1->Fill(number);
   }
 
-//Loop to fill the mass and frequency vectors
-  for (int i = 0; i < bins; ++i)
-  {
-    //Get the hight of the bin
-  	Int_t element_volume=metmass->GetBinContent (i);
-  	//Put it in the volume vector 
-  	volume->push_back(element_volume);
-  	//Fill the frequency vector with the formula that maps mass to frequency depending on the iteration
-  	freq->push_back(i*g*step+2000);
-  }
+  for (int i = 0 ;i<bins;i++)
+    {
+      number = h1 ->GetBinError(i+1);                
+      double element_volume=h1->GetBinContent(i+1);
+      volume.push_back(element_volume);
+      //cout<<"volume "<<element_volume<<endl;
+      frequency.push_back(i*step*k+b);
+      //cout<<"freq "<<i*step*k+b<<endl;        
+      error.push_back(number);                      
+    }
 
   // cleanup
-  delete file; // automatically deletes "tree" too
-  delete metdata;
-  return 0; 
+  delete f; // automatically deletes "tree" too
+  return volume; 
 }
+
+
+vector<double> frequency()
+{ 
+
+  //Resolution of the histogram
+  int bins=50;
+
+  //Amount of events
+  int amount=1000;
+
+  Double_t max=20;
+  Double_t min=-20;
+  Double_t step=max/bins;
+  Double_t k=3000/(max-min);
+  Double_t b=5000-k*max;
+
+/////////////////////////////////////////////////////
+
+  //Create false data
+
+  TFile *f=new TFile("gaussian.root","recreate");
+  TF1 *g1 =new TF1("g1","gaus",-20,20);
+  g1->SetParameters(1,-2,2);
+  TH1 *h1=new TH1F("h1","gaus",bins,-20,20);
+  h1->Sumw2();
+  Double_t number;
+
+  //std::vector<Int_t> * volume=new std::vector<Int_t>;
+  //std::vector<Int_t> * frequency=new std::vector<Int_t>;
+  //std::vector<Double_t> * error=new std::vector<Double_t>;
+
+   std::vector<double> volume;
+    std::vector<double> frequency;
+     std::vector<double> error;
+
+  for (int i=0;i<amount;i++)
+  {
+    number=g1->GetRandom(-20,20);         
+    h1->Fill(number);
+  }
+
+  for (int i = 0 ;i<bins;i++)
+    {
+      number = h1 ->GetBinError(i+1);                
+      double element_volume=h1->GetBinContent(i+1);
+      volume.push_back(element_volume);
+      //cout<<"volume "<<element_volume<<endl;
+      frequency.push_back(i*step*k+b);
+      //cout<<"freq "<<i*step*k+b<<endl;       
+      error.push_back(number);                      
+    }
+
+  // cleanup
+  return frequency; 
+}
+
+
+ int main()
+ {
+    acc * oj = new acc();
+    vector<double> test1 = oj->frequency();
+    vector<double> test2 = oj->volume();
+   return 0;
+ }};
