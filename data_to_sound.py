@@ -15,7 +15,7 @@ def extract_data(filename, branchname):
 	# Takes the name of a ROOT file and branch within that file.
 	# Constructs a histogram and returns (values, bin_min, bin_max, bin_width).
 	# Probably works by calling to a C++ ROOT macro.
-	data = ROOT.volume() #filename, branchname)
+	data = ROOT.volume(filename, branchname)
 	return data
 
 

@@ -40,16 +40,16 @@ using namespace std;
 //Sonification of root for blind scientist
 
 //Get the volume vector 
-std::vector<Double_t> volume()
+std::vector<Double_t> volume(char * filename, char * histoname)
 { 
 
 /////////////////////////////////////////////////////
 
 //Load the file with the histogram
-  TFile *f=new TFile("gaussian.root","read");
+  TFile *f=new TFile(filename,"read");
 //Extract the histogram
 //the name of the histogram should be a string class variable, but for now it has t be h1
-  TH1F *h1=(TH1F*)f->Get("h1");
+  TH1F *h1=(TH1F*)f->Get(histoname);
   Double_t number;
 
  //Resolution of the histogram
@@ -96,16 +96,16 @@ std::vector<Double_t> volume()
 }
 
 
-vector<double> frequency()
+vector<double> frequency(char * filename, char * histoname)
 { 
 
 /////////////////////////////////////////////////////
 
 //Load the file with the histogram
-  TFile *f=new TFile("gaussian.root","read");
+  TFile *f=new TFile(filename,"read");
 //Extract the histogram
 //the name of the histogram should be a string class variable, but for now it has t be h1
-  TH1F *h1=(TH1F*)f->Get("h1");
+  TH1F *h1=(TH1F*)f->Get(histoname);
   Double_t number;
 
  //Resolution of the histogram
