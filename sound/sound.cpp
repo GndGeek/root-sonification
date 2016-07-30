@@ -39,25 +39,21 @@ using namespace std;
 
 //Sonification of root for blind scientist
 
-//Class to get the volume and frequency vectors
-class acc 
-{
-
 //Get the volume vector 
-vector<double> volume()
+std::vector<Double_t> volume()
 { 
 
 /////////////////////////////////////////////////////
 
 //Load the file with the histogram
-  TFile *f=new TFile("gaussian.root","recreate");
+  TFile *f=new TFile("gaussian.root","read");
 //Extract the histogram
 //the name of the histogram should be a string class variable, but for now it has t be h1
   TH1F *h1=(TH1F*)f->Get("h1");
   Double_t number;
 
  //Resolution of the histogram
-  int bins=h1->GetSize()-2;
+  Int_t bins=h1->GetSize()-2;
 
 //Maximum value of the histogram
   Double_t max=h1->GetMaximum();
@@ -106,14 +102,14 @@ vector<double> frequency()
 /////////////////////////////////////////////////////
 
 //Load the file with the histogram
-  TFile *f=new TFile("gaussian.root","recreate");
+  TFile *f=new TFile("gaussian.root","read");
 //Extract the histogram
 //the name of the histogram should be a string class variable, but for now it has t be h1
   TH1F *h1=(TH1F*)f->Get("h1");
   Double_t number;
 
  //Resolution of the histogram
-  int bins=h1->GetSize()-2;
+  Int_t bins=h1->GetSize()-2;
 
 //Maximum value of the histogram
   Double_t max=h1->GetMaximum();
@@ -158,9 +154,5 @@ vector<double> frequency()
 //This returns the vectors we got, don't ask me how
  int main()
  {
-    acc * oj = new acc();
-    vector<double> test1 = oj->frequency();
-    vector<double> test2 = oj->volume();
    return 0;
  }
-};
