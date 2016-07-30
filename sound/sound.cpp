@@ -55,10 +55,10 @@ std::vector<vector<Double_t>> * generate_data()
 
   //Create false data
 
-  TFile *f=new TFile("gaussian.root","recreate");
-  TF1 *g1 =new TF1("g1","gaus",-20,20);
-  g1->SetParameters(1,-2,2);
-  TH1 *h1=new TH1F("h1","gaus",bins,-20,20);
+  TFile *f=new TFile("tester.root","recreate");
+  TF1 *g1 =new TF1("g1","abs(sin(x)/x)",0,10);
+  
+  TH1 *h1=new TH1F("h1","tester",bins,0,10);
   h1->Sumw2();
   Double_t number;
 
@@ -68,7 +68,7 @@ std::vector<vector<Double_t>> * generate_data()
 
   for (int i=0;i<amount;i++)
   {
-    number=g1->GetRandom(-20,20);         
+    number=g1->GetRandom(0,10);         
     h1->Fill(number);
   }
 
