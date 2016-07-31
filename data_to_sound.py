@@ -3,8 +3,8 @@ import ROOT, math, argparse
 
 parser = argparse.ArgumentParser(description="Convert a ROOT file containing a histogram into a MIDI file containing its sonification.")
 parser.add_argument("input", help="Name of ROOT file to read in.")
-parser.add_argument("histogram", help="Name of the histogram in the input file.")
 parser.add_argument("output", help="Name of MIDI file to generate.")
+parser.add_argument("histograms", metavar="histogram", nargs="+", help="Names of the histograms in the input file.")
 parser.add_argument("--duration", help="Duration of each note.", type=int, default=128)
 args = parser.parse_args()
 
@@ -20,7 +20,7 @@ def extract_data(filename, branchname):
 	return data
 
 
-def data_to_sound(values, bin_min, bin_max, bin_width):
+def data_to_sound(values):
 	# Takes a list containing the number of events in each bin, ordered from lowest to highest. Also takes the bottom of the lowest bin, top of the highest bin, and width of each bin.
 	# Returns a list of MIDI Messages.
 	values_max = max(values)
@@ -51,18 +51,20 @@ def data_to_sound(values, bin_min, bin_max, bin_width):
 	
 	return messages
 
-def output_messages(filename, messages):
+def output_messages(filename, *messages):
 	# Takes the name of a MIDI file to create and fill with the list of messages.
 	# Returns nothing.
 	with MidiFile() as outfile:
-		track = MidiTrack()
-		outfile.tracks.append(track)
-
-		for message in messages:
-			track.append(message)
+		for message_track in messages:
+			track = MidiTrack()
+			outfile.tracks.append(track)
+			for message in message_track:
+				track.append(message)
 	outfile.save(filename)
 
 if __name__ == '__main__':
-	d = extract_data(args.input, args.histogram)
-	s = data_to_sound(d, 0, 0, 0)
-	output_messages(args.output, s)
+	tracks = []
+	for histo in args.histograms:
+		d = extract_data(args.input, histo)
+		tracks.append(data_to_sound(d))
+	output_messages(args.output, *tracks)
