@@ -3,6 +3,7 @@ import ROOT, math, argparse
 
 parser = argparse.ArgumentParser(description="Convert a ROOT file containing a histogram into a MIDI file containing its sonification.")
 parser.add_argument("input", help="Name of ROOT file to read in.")
+parser.add_argument("histogram", help="Name of the histogram in the input file.")
 parser.add_argument("output", help="Name of MIDI file to generate.")
 parser.add_argument("--duration", help="Duration of each note.", type=int, default=128)
 args = parser.parse_args()
@@ -62,6 +63,6 @@ def output_messages(filename, messages):
 	outfile.save(filename)
 
 if __name__ == '__main__':
-	d = extract_data(args.input, "h1")
+	d = extract_data(args.input, args.histogram)
 	s = data_to_sound(d, 0, 0, 0)
 	output_messages(args.output, s)
